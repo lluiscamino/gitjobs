@@ -5,6 +5,7 @@ import {Nav, Navbar, NavDropdown, ThemeProvider} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import GitForm from './GitForm';
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import UserInfo from "./UserInfo";
 
 function App() {
   return (
@@ -35,7 +36,7 @@ function App() {
 
                   <Routes>
                       <Route path="/" element={<GitForm/>}/>
-                      <Route path="/user/:{user}"/>
+                      <Route path="/user/:username" element={<UserInfo/>}/>
                   </Routes>
 
               </ThemeProvider>
