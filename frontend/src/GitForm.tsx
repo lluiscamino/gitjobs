@@ -1,9 +1,11 @@
 import React from 'react';
-import {Form, Button} from 'react-bootstrap';
-import { FaGithub  } from "react-icons/fa";
+import {Button} from 'react-bootstrap';
+import {AiFillGithub} from "react-icons/ai";
 
 // Form for signing in to github
 export default function GitForm() {
+    const authenticateUrl = 'http://127.0.0.1:8080/githubUser/authenticate';
+
   return (
     <>
     {/* use if we will need to input mail
@@ -20,8 +22,8 @@ export default function GitForm() {
       </Form> */}
 
       {/* call github sign in api */}
-      <Button variant="primary" onClick={() => "http://127.0.0.1:8080/sign-in-github"}>
-        Log in with GitHub
+        <Button variant="outline-dark" onClick={() => window.location.href = authenticateUrl}>
+            <AiFillGithub/> Sign in with GitHub
       </Button>
     </>
   )
