@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './UserInfo.css';
-import { useSearchParams } from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import Image from 'react-bootstrap/Image'
-import { Badge, Button, Col, Form, Row, Spinner } from "react-bootstrap";
+import {Badge, Button, Col, Form, Row, Spinner} from "react-bootstrap";
 import Offer from "./Offer";
 import getColor from 'github-lang-colors';
 
@@ -12,16 +12,15 @@ function UserInfo() {
     const [error, setError] = useState();
     const [searchParams] = useSearchParams();
 
-    console.log(offers);
-
     useEffect(() => {
         fetch(`http://127.0.0.1:8080/githubUser/getInfo?code=${searchParams.get('code')}`)
             .then(response => response.json())
             .then((data) => {
-                setUserInfo(data)
-                fetch(`http://127.0.0.1:8080/infoJobs/getOffers?userInfo=${JSON.stringify(data)}`)
+                setUserInfo(data);
+                const langs = Object.entries(data.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6);
+                fetch(`http://127.0.0.1:8080/infoJobs/getOffers?langs=${langs.join(',').replace(/\s/g, '%20')}&city=${data.location}`)
                     .then(response => response.json())
-                    .then(data => setOffers(data))
+                    .then(data => setOffers(data.slice(0, 27)))
                     .catch(error => setError(error))
             })
             .catch(error => setError(error));
@@ -43,7 +42,7 @@ function UserInfo() {
         );
     }
 
-    const langEntries = Object.entries(userInfo.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    const langs = Object.entries(userInfo.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6);
 
     const githubSignUpDate = new Date(userInfo.created_at);
     const yearsOfExperience = new Date().getFullYear() - githubSignUpDate.getFullYear();
@@ -63,7 +62,7 @@ function UserInfo() {
                             userInfo.location && <>📍 {userInfo.location}</>
                         }
                         <br />
-                        👨‍💻 {langEntries.map((entry, key) => {
+                        👨‍💻 {langs.map((entry, key) => {
                             return (
                                 <Badge
                                     ref={node => {
@@ -115,8 +114,8 @@ function UserInfo() {
             <h3>Recommended job offers</h3>
             <div className="container">
                 <div className="row">
-                {offers.map((offer) => (
-                    <div className="col-md-4"><Offer offerInfo={offer}></Offer></div>
+                    {offers.map((offer, key) => (
+                        <div key={key} className="col-md-4"><Offer offerInfo={offer}/></div>
                 ))}
                 </div>
             </div>

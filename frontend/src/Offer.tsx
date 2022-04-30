@@ -4,9 +4,6 @@ import {Button, Card, Image, Modal} from "react-bootstrap";
 function Offer({offerInfo}) {
     const [modalOpen, setModalOpen] = useState(false);
 
-    console.log("Here")
-    console.log(offerInfo)
-
     return (
         <>
             <Card style={{width: "20em", height:"25em"}}>
