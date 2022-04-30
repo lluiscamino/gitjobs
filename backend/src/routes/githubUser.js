@@ -69,12 +69,12 @@ router.get('/getInfo', async (req, res) => {
         const userRepos = await getRepos(reposURL, {
             headers: { 'Authorization': 'token ' + token }
         });
-        const starredRepos = await getRepos(starredURL, {
-            headers: { 'Authorization': 'token ' + token }
-        });
-        const watchedRepos = await getRepos(watchingURL, {
-            headers: { 'Authorization': 'token ' + token }
-        });
+        // const starredRepos = await getRepos(starredURL, {
+        //     headers: { 'Authorization': 'token ' + token }
+        // });
+        // const watchedRepos = await getRepos(watchingURL, {
+        //     headers: { 'Authorization': 'token ' + token }
+        // });
         const reposInfo = {
             repoLanguages: {},
             repoTopics: [],
@@ -114,8 +114,8 @@ router.get('/getInfo', async (req, res) => {
         for (const repo of watchedRepos) {
             repoInfoPromises.push(getRepoInfo(repo))
         }*/
-      Promise.all(repoInfoPromises).then(async _ => {
-        const userInfo = {...reposInfo, ...userData, friends: await getFriends(token)};
+        Promise.all(repoInfoPromises).then(async _ => {
+            const userInfo = { ...reposInfo, ...userData, token: token };
 
             res.status(200).send(userInfo);
         })

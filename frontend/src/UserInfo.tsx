@@ -18,7 +18,7 @@ function UserInfo() {
             .then((data) => {
                 setUserInfo(data);
                 const langs = Object.entries(data.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6);
-                fetch(`http://127.0.0.1:8080/infoJobs/getOffers?langs=${langs.join(',').replace(/\s/g, '%20')}&city=${data.location}`)
+                fetch(`http://127.0.0.1:8080/infoJobs/getOffers?userInfo=${JSON.stringify(data)}&langs=${langs.join(',').replace(/\s/g, '%20')}&city=${data.location}`)
                     .then(response => response.json())
                     .then(data => setOffers(data.slice(0, 27)))
                     .catch(error => setError(error))
