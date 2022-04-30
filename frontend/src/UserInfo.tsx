@@ -129,6 +129,15 @@ function UserInfo() {
                 ))}
                 </div>
             </div>
+            <hr/>
+            <h3>Friends</h3>
+            <Container>
+                <Row>
+                    {
+                        userInfo.friends.map(friend => <FriendCard key={friend.id} friend={friend}/>)
+                    }
+                </Row>
+            </Container>
         </>
     );
 }
