@@ -56,14 +56,18 @@ router.get('/getInfo', async (req, res) => {
 
         // call urls and for each, access languages, topics and readme contents
         const getRepos = async url => {
-            repos = await axios.get(url);
+          repos = await axios.get(url, {
+            headers: {'Authorization': 'token ' + token}
+          });
             return repos.data;
         };
 
         const reposURL = userData.data.repos_url;
         // const starredURL = userData.data.starred_url.replace('{/owner}{/repo}','');
         // const watchingURL = userData.data.subscriptions_url;
-        const userRepos = await getRepos(reposURL);
+      const userRepos = await getRepos(reposURL, {
+        headers: {'Authorization': 'token ' + token}
+      });
         // const starredRepos = await getRepos(starredURL);
         // const watchedRepos = await getRepos(watchingURL);
         console.log(userRepos);
@@ -72,7 +76,7 @@ router.get('/getInfo', async (req, res) => {
             repoTopics: []
         };
 
-        let counter = 0
+      let counter = 0;
         const getReposInfo = (async repo => {
             //TODO get readme contents
             if(counter > 10) {
@@ -80,8 +84,10 @@ router.get('/getInfo', async (req, res) => {
                 return;
             }
             counter++;
-            const repoLanguages = await axios.get(repo.languages_url);
-            console.log(repo.topics)
+          const repoLanguages = await axios.get(repo.languages_url, {
+            headers: {'Authorization': 'token ' + token}
+          });
+          console.log(repo.topics);
             reposInfo.repoLanguages = { ...reposInfo.repoLanguages, repoLanguages };
             reposInfo.repoTopics = [...new Set([...reposInfo.repoTopics, ...repo.topics])];
         });
@@ -93,7 +99,7 @@ router.get('/getInfo', async (req, res) => {
         // watchedRepos.forEach(getReposInfo);
 
 
-        const userInfo = {...reposInfo ,...{ bio: bio }}
+      const userInfo = {...reposInfo, ...{bio: bio}};
         console.log(userInfo);
         res.status(200).send(userInfo);
     } catch (e) {
