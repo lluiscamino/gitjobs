@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import {Nav, Navbar, NavDropdown, ThemeProvider} from "react-bootstrap";
+import {Image, Nav, Navbar, NavDropdown, ThemeProvider} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import GitForm from './GitForm';
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
@@ -16,7 +16,9 @@ function App() {
               >
                   <Navbar variant="dark" bg="dark" expand="lg">
                       <Container>
-                          <Navbar.Brand href="/">GitJobs</Navbar.Brand>
+                          <Navbar.Brand href="/">
+                              <Image height={32} src="/logo.png" alt="Home page"/> GitJobs
+                          </Navbar.Brand>
                           <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                           <Navbar.Collapse id="basic-navbar-nav">
                               <Nav className="me-auto">
