@@ -3,6 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 const { URLSearchParams } = require('url');
 require('dotenv').config();
+const getFriends = require('./friends');
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -113,8 +114,8 @@ router.get('/getInfo', async (req, res) => {
         for (const repo of watchedRepos) {
             repoInfoPromises.push(getRepoInfo(repo))
         }*/
-        Promise.all(repoInfoPromises).then(_ => {
-            const userInfo = { ...reposInfo, ...userData };
+      Promise.all(repoInfoPromises).then(async _ => {
+        const userInfo = {...reposInfo, ...userData, friends: await getFriends(token)};
 
             res.status(200).send(userInfo);
         })
