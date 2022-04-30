@@ -113,9 +113,9 @@ function UserInfo() {
             <hr />
             <h3>Recommended job offers</h3>
             <div className="container">
-                <div className="row">
+                <div className="row" >
                     {offers.map((offer, key) => (
-                        <div key={key} className="col-md-4"><Offer offerInfo={offer}/></div>
+                        <div key={key} className="col-md-4 mt-3 mt-3"><Offer offerInfo={offer}/></div>
                 ))}
                 </div>
             </div>
