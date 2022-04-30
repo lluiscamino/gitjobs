@@ -76,18 +76,31 @@ router.get('/getInfo', async (req, res) => {
         });
         const reposInfo = {
             repoLanguages: {},
-            repoTopics: []
+            repoTopics: [],
+            repoReadmes: []
         };
 
         const getRepoInfo = async repo => {
-            //TODO get readme contents
-            const repoLanguages = await axios.get(repo.languages_url, {
-                headers: { 'Authorization': 'token ' + token }
-            });
-            reposInfo.repoLanguages = Object.entries(reposInfo.repoLanguages).reduce((acc, [key, value]) =>
+            try {
+
+                const owner = repo.owner.login
+                const repoName = repo.name
+                
+                const readmeURL = await axios.get(`https://api.github.com/repos/${owner}/${repoName}/readme`, {
+                    headers: { 'Authorization': 'token ' + token }
+                });
+                const repoLanguages = await axios.get(repo.languages_url, {
+                    headers: { 'Authorization': 'token ' + token }
+                });
+                
+                reposInfo.repoLanguages = Object.entries(reposInfo.repoLanguages).reduce((acc, [key, value]) =>
                 ({ ...acc, [key]: (acc[key] || 0) + value })
                 , { ...repoLanguages.data });
-            reposInfo.repoTopics = [...new Set([...reposInfo.repoTopics, ...repo.topics])];
+                reposInfo.repoTopics = [...new Set([...reposInfo.repoTopics, ...repo.topics])];
+                reposInfo.repoReadmes.push(readmeURL.data.download_url)
+            } catch (err) {
+                console.error(err)
+            }
         };
 
         let repoInfoPromises = []
@@ -102,7 +115,7 @@ router.get('/getInfo', async (req, res) => {
         }
         Promise.all(repoInfoPromises).then(_ => {
             const userInfo = { ...reposInfo, ...userData };
-            console.log(userInfo);
+            // console.log(userInfo);
             res.status(200).send(userInfo);
         })
     } catch (e) {
