@@ -6,6 +6,7 @@ import Container from "react-bootstrap/Container";
 import GitForm from './GitForm';
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import UserInfo from "./UserInfo";
+import GitHubRedirect from "./GithubRedirect";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
 
                   <Routes>
                       <Route path="/" element={<GitForm/>}/>
+                      <Route path="/redirect" element={<GitHubRedirect/>}/>
                       <Route path="/user/:username" element={<UserInfo/>}/>
                   </Routes>
 
