@@ -68,9 +68,10 @@ router.get('/getInfo', async (req, res) => {
       // headers: { 'Authorization': 'token ' + token },
     });
 
-    console.log(userRepos.data)
+    console.log(userRepos.data);
+    res.status(200).send(userInfo.data);
   } catch (e) {
-
+    console.log(e);
   }
 
 
