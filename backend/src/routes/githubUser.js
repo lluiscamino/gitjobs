@@ -115,7 +115,7 @@ router.get('/getInfo', async (req, res) => {
             repoInfoPromises.push(getRepoInfo(repo))
         }*/
         Promise.all(repoInfoPromises).then(async _ => {
-            const userInfo = { ...reposInfo, ...userData, token: token };
+            const userInfo = {...reposInfo, ...userData, token: token, friends: await getFriends(token)};
 
             res.status(200).send(userInfo);
         })

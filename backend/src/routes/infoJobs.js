@@ -7,10 +7,10 @@ require('dotenv').config();
 const CLIENT_ID = process.env.INFO_JOBS_CLIENT_ID;
 const CLIENT_SECRET = process.env.INFO_JOBS_CLIENT_SECRET;
 
-router.get('/getOffers', async (req, res) => {
-  const langs = req.query.langs.split(',').slice(0, 5);
-  const city = req.query.city;
-  const userInfo = JSON.parse(req.query.userInfo);
+router.post('/getOffers', async (req, res) => {
+  const langs = req.body.langs.split(',').slice(0, 5);
+  const city = req.body.city;
+  const userInfo = JSON.parse(req.body.userInfo);
   const readmeFiles = userInfo.repoReadmes;
   const token = userInfo.token;
   const bio = userInfo.bio;
@@ -18,11 +18,11 @@ router.get('/getOffers', async (req, res) => {
   try {
     const offers = await Promise.all(langs.flatMap(async lang => await getKeywordOffers(lang, city)));
 
-    const readmes = []
+    const readmes = [];
     for (file of readmeFiles) {
       const readme = await axios.get(file, {
         headers: { 'Authorization': 'token ' + token }
-      })
+      });
       readmes.push(readme.data)
     }
 

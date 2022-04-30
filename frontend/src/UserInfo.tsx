@@ -2,9 +2,10 @@ import React, {useEffect, useState} from 'react';
 import './UserInfo.css';
 import {useSearchParams} from "react-router-dom";
 import Image from 'react-bootstrap/Image'
-import {Badge, Button, Col, Form, Row, Spinner} from "react-bootstrap";
+import {Badge, Button, Col, Container, Form, Row, Spinner} from "react-bootstrap";
 import Offer from "./Offer";
 import getColor from 'github-lang-colors';
+import FriendCard from "./FriendCard";
 
 function UserInfo() {
     const [userInfo, setUserInfo] = useState();
@@ -18,7 +19,18 @@ function UserInfo() {
             .then((data) => {
                 setUserInfo(data);
                 const langs = Object.entries(data.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6);
-                fetch(`http://127.0.0.1:8080/infoJobs/getOffers?userInfo=${JSON.stringify(data)}&langs=${langs.join(',').replace(/\s/g, '%20')}&city=${data.location}`)
+                fetch('http://127.0.0.1:8080/infoJobs/getOffers', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userInfo: JSON.stringify(data),
+                        langs: langs.join(',').replace(/\s/g, '%20'),
+                        city: data.location
+                    })
+                })
                     .then(response => response.json())
                     .then(data => setOffers(data.slice(0, 27)))
                     .catch(error => setError(error))
@@ -85,7 +97,7 @@ function UserInfo() {
                     <Col>
                         <Form.Group>
                             <Form.Label>Location</Form.Label>
-                            <Form.Control type="text" />
+                            <Form.Control type="text" defaultValue={userInfo.location}/>
                         </Form.Group>
                     </Col>
                     <Col>
@@ -108,8 +120,6 @@ function UserInfo() {
                     </Col>
                 </Row>
             </Form>
-            <hr />
-            <h3>Colleagues</h3>
             <hr />
             <h3>Recommended job offers</h3>
             <div className="container">
