@@ -39,10 +39,9 @@ router.get('/getInfo', async (req, res) => {
     const token = accessToken.data.access_token;
 
     if (!token) {
-        console.log("Invalid token");
+        console.error("Invalid token");
         return;
     }
-    console.log(token);
 
     try {
         const userData = await axios({
@@ -52,61 +51,62 @@ router.get('/getInfo', async (req, res) => {
         });
 
         // extract queryable info from bio
+        //TODO add more personal info to query
         const bio = userData.data.bio;
 
         // call urls and for each, access languages, topics and readme contents
         const getRepos = async url => {
-          repos = await axios.get(url, {
-            headers: {'Authorization': 'token ' + token}
-          });
+            repos = await axios.get(url, {
+                headers: { 'Authorization': 'token ' + token }
+            });
             return repos.data;
         };
 
         const reposURL = userData.data.repos_url;
-        // const starredURL = userData.data.starred_url.replace('{/owner}{/repo}','');
-        // const watchingURL = userData.data.subscriptions_url;
-      const userRepos = await getRepos(reposURL, {
-        headers: {'Authorization': 'token ' + token}
-      });
-        // const starredRepos = await getRepos(starredURL);
-        // const watchedRepos = await getRepos(watchingURL);
-        console.log(userRepos);
-        let reposInfo = {
+        const starredURL = userData.data.starred_url.replace('{/owner}{/repo}', '');
+        const watchingURL = userData.data.subscriptions_url;
+
+        const userRepos = await getRepos(reposURL, {
+            headers: { 'Authorization': 'token ' + token }
+        });
+        const starredRepos = await getRepos(starredURL, {
+            headers: { 'Authorization': 'token ' + token }
+        });
+        const watchedRepos = await getRepos(watchingURL, {
+            headers: { 'Authorization': 'token ' + token }
+        });
+        const reposInfo = {
             repoLanguages: {},
             repoTopics: []
         };
 
-      let counter = 0;
-        const getReposInfo = (async repo => {
+        const getRepoInfo = async repo => {
             //TODO get readme contents
-            if(counter > 10) {
-                console.log("TOO MUCH REQUESTS");
-                return;
-            }
-            counter++;
-          const repoLanguages = await axios.get(repo.languages_url, {
-            headers: {'Authorization': 'token ' + token}
-          });
-          console.log(repo.topics);
-            reposInfo.repoLanguages = { ...reposInfo.repoLanguages, repoLanguages };
+            const repoLanguages = await axios.get(repo.languages_url, {
+                headers: { 'Authorization': 'token ' + token }
+            });
+            //TODO merge language bytes written with sum
+            reposInfo.repoLanguages = { ...reposInfo.repoLanguages, ...repoLanguages.data };
+
             reposInfo.repoTopics = [...new Set([...reposInfo.repoTopics, ...repo.topics])];
-        });
+        };
 
-        //userRepos.forEach(getReposInfo);
+        for (const repo of userRepos) {
+            await getRepoInfo(repo)
+        }
+        for (const repo of starredRepos) {
+            await getRepoInfo(repo)
+        }
+        for (const repo of watchedRepos) {
+            await getRepoInfo(repo)
+        }
 
-        // starredRepos.forEach(getReposInfo);
-
-        // watchedRepos.forEach(getReposInfo);
-
-
-      const userInfo = {...reposInfo, ...{bio: bio}};
+        const userInfo = { ...reposInfo, ...{ bio: bio } };
         console.log(userInfo);
         res.status(200).send(userInfo);
     } catch (e) {
         console.log(e);
-    }
-
-
+    };
 });
 
 module.exports = router;
