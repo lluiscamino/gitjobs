@@ -18,7 +18,7 @@ router.get('/getOffers', async (req, res) => {
           password: CLIENT_SECRET
         },
         params: {
-          q: query.q,
+          q: "java",
           city: "Madrid",
           province: "Madrid"
         }

@@ -8,13 +8,21 @@ import getColor from 'github-lang-colors';
 
 function UserInfo() {
     const [userInfo, setUserInfo] = useState();
+    const [offers, setOffers] = useState([]);
     const [error, setError] = useState();
     const [searchParams] = useSearchParams();
+
+    console.log(offers);
 
     useEffect(() => {
         fetch(`http://127.0.0.1:8080/githubUser/getInfo?code=${searchParams.get('code')}`)
             .then(response => response.json())
             .then(data => setUserInfo(data))
+            .catch(error => setError(error));
+
+        fetch('http://127.0.0.1:8080/infoJobs/getOffers')
+            .then(response => response.json())
+            .then(data => setOffers(data))
             .catch(error => setError(error))
     }, []);
 
@@ -55,7 +63,6 @@ function UserInfo() {
                         }
                         <br/>
                         👨‍💻 {langEntries.map((entry, key) => {
-                        console.log(getColor(entry[0]) + " !important");
                         return (
                             <Badge
                                 ref={node => {
