@@ -83,40 +83,47 @@ router.get('/getInfo', async (req, res) => {
         const getRepoInfo = async repo => {
             try {
 
-              const owner = repo.owner.login;
-              const repoName = repo.name;
-                
+                const owner = repo.owner.login;
+                const repoName = repo.name;
+
                 const readmeURL = await axios.get(`https://api.github.com/repos/${owner}/${repoName}/readme`, {
                     headers: { 'Authorization': 'token ' + token }
                 });
                 const repoLanguages = await axios.get(repo.languages_url, {
                     headers: { 'Authorization': 'token ' + token }
                 });
-                
+
                 reposInfo.repoLanguages = Object.entries(reposInfo.repoLanguages).reduce((acc, [key, value]) =>
-                ({ ...acc, [key]: (acc[key] || 0) + value })
-                , { ...repoLanguages.data });
+                    ({ ...acc, [key]: (acc[key] || 0) + value })
+                    , { ...repoLanguages.data });
                 reposInfo.repoTopics = [...new Set([...reposInfo.repoTopics, ...repo.topics])];
                 reposInfo.repoReadmes.push(readmeURL.data.download_url)
             } catch (err) {
-                console.error(err)
+                console.error('Error getting repo info, skipping')
             }
         };
 
-      let repoInfoPromises = [];
+        let repoInfoPromises = [];
         for (const repo of userRepos) {
             repoInfoPromises.push(getRepoInfo(repo))
         }
-      /*for (const repo of starredRepos) {
-          repoInfoPromises.push(getRepoInfo(repo))
-      }
-      for (const repo of watchedRepos) {
-          repoInfoPromises.push(getRepoInfo(repo))
-      }*/
+        /*for (const repo of starredRepos) {
+            repoInfoPromises.push(getRepoInfo(repo))
+        }
+        for (const repo of watchedRepos) {
+            repoInfoPromises.push(getRepoInfo(repo))
+        }*/
         Promise.all(repoInfoPromises).then(_ => {
             const userInfo = { ...reposInfo, ...userData };
-            // console.log(userInfo);
-            res.status(200).send(userInfo);
+
+            axios({
+                method: 'get',
+                url: 'http://127.0.0.1:8080/infoJobs/getOffers',
+                headers: { 'Accept': 'application/json' },
+                params: {
+                    userInfo: userInfo
+                }
+            }).then(data => res.status(200).send(data.offers));
         })
     } catch (e) {
         console.log(e);
