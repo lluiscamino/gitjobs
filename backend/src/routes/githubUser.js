@@ -56,9 +56,9 @@ router.get('/getInfo', async (req, res) => {
 
         // call urls and for each, access languages, topics and readme contents
         const getRepos = async url => {
-            repos = await axios.get(url)
-            return repos.data
-        }
+            repos = await axios.get(url);
+            return repos.data;
+        };
 
         const reposURL = userData.data.repos_url;
         // const starredURL = userData.data.starred_url.replace('{/owner}{/repo}','');
@@ -66,20 +66,27 @@ router.get('/getInfo', async (req, res) => {
         const userRepos = await getRepos(reposURL);
         // const starredRepos = await getRepos(starredURL);
         // const watchedRepos = await getRepos(watchingURL);
-
+        console.log(userRepos);
         let reposInfo = {
             repoLanguages: {},
             repoTopics: []
-        }
+        };
 
+        let counter = 0
         const getReposInfo = (async repo => {
             //TODO get readme contents
+            if(counter > 10) {
+                console.log("TOO MUCH REQUESTS");
+                return;
+            }
+            counter++;
             const repoLanguages = await axios.get(repo.languages_url);
+            console.log(repo.topics)
             reposInfo.repoLanguages = { ...reposInfo.repoLanguages, repoLanguages };
-            reposInfo.repoTopics = [...new Set([...reposInfo.repoTopics, ...repo.topics])]
+            reposInfo.repoTopics = [...new Set([...reposInfo.repoTopics, ...repo.topics])];
         });
 
-        userRepos.forEach(getReposInfo);
+        //userRepos.forEach(getReposInfo);
 
         // starredRepos.forEach(getReposInfo);
 
