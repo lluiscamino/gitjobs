@@ -1,10 +1,12 @@
 const createError = require("http-errors");
-const express = require('express')
+const express = require('express');
 
 const apiRouter = require('./routes/api.js');
 
+const cors = require('cors');
 const app = express();
 
+app.use(cors());
 app.use('/', apiRouter);
 
 app.use(function (req, res, next) {
@@ -20,6 +22,6 @@ app.use(function (err, req, res) {
 });
 
 
-app.listen(8080, () => console.log('Listening correctly'))
+app.listen(8080, () => console.log('Listening correctly'));
 
 module.exports = app;
