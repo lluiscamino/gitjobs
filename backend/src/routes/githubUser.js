@@ -15,25 +15,55 @@ router.get('/authenticate', (req, res) => {
     res.status(301).redirect('https://github.com/login/oauth/authorize/?' + params)
 });
 
-router.get('/getInfo', (req, res) => {
+router.get('/getInfo', async (req, res) => {
     const code = req.query.code
-    axios({
-        method: 'post',
-        url: 'https://github.com/login/oauth/access_token',
-        headers: { 'Accept': 'application/json' },
-        params: {
-            client_id: CLIENT_ID,
-            client_secret: CLIENT_SECRET,
-            code: code,
+    let accessToken;
+    try {
+        accessToken = await axios({
+            method: 'post',
+            url: 'https://github.com/login/oauth/access_token',
+            headers: { 'Accept': 'application/json' },
+            params: {
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+                code: code,
 
-        }
-    }).then(response => {
-        const token = response.data.access_token
-        axios({
-            url: 'https://api.github.com/user',
-            headers: { 'Authorization': 'token ' + token }
-        }).then(data => console.log(data.data))
-    })
+            }
+        });
+    } catch (err) {
+        console.error("Failed to obtain access token");
+        debug(err.stack)
+        res.sendStatus(500);
+    }
+
+    const token = accessToken.data.access_token;
+
+    const userInfo = await axios({
+        method: 'get',
+        url: 'https://api.github.com/user',
+        headers: { 'Authorization': 'token ' + token },
+    });
+
+    // call urls and for each, access languages, topics and readme contents
+    const starredURL = userInfo.data.starred_url;
+    const reposURL = userInfo.data.repos_url;
+    const watchingURL = userInfo.data.subscriptions_url;
+
+    const bio = userInfo.data.bio;
+
+    // console.log("starred " + starredURL)
+    // console.log("repos " + reposURL)
+    // console.log("watching " + watchingURL)
+    // console.log("bio " + bio)
+
+    const userRepos = await axios({
+        method: 'get',
+        url: reposURL,
+        // headers: { 'Authorization': 'token ' + token },
+    });
+
+    console.log(userRepos.data)
+
 
 })
 
