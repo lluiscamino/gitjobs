@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useSearchParams} from "react-router-dom";
 import Image from 'react-bootstrap/Image'
-import {Col, Row, Spinner} from "react-bootstrap";
+import {Col, Form, Row, Spinner} from "react-bootstrap";
 
 function UserInfo() {
     const [userInfo, setUserInfo] = useState();
@@ -33,13 +33,16 @@ function UserInfo() {
         );
     }
 
+    const githubSignUpDate = new Date(userInfo.created_at);
+    const yearsOfExperience = new Date().getFullYear() - githubSignUpDate.getFullYear();
+
     console.log(userInfo);
 
     return (
         <>
             <div className="user-header">
                 <Row>
-                    <Col xs={2}>
+                    <Col xs="auto">
                         <Image src={userInfo.avatar_url} alt={userInfo.name} height={128} width={128} roundedCircle/>
                     </Col>
                     <Col>
@@ -53,6 +56,31 @@ function UserInfo() {
                 </Row>
             </div>
             <hr/>
+            <Form>
+                <h3>Search parameters</h3>
+                <Row>
+                    <Col>
+                        <Form.Group>
+                            <Form.Label>Location</Form.Label>
+                            <Form.Control type="text"/>
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group>
+                            <Form.Label>Years of experience</Form.Label>
+                            <Form.Control type="number" defaultValue={yearsOfExperience}/>
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group>
+                            <Form.Label>Technical skills</Form.Label>
+                            <Form.Control type="text"/>
+                        </Form.Group>
+                    </Col>
+                </Row>
+            </Form>
+            <hr/>
+            <h3>Recommended job offers</h3>
         </>
     );
 }
