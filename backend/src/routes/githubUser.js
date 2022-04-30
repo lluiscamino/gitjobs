@@ -107,12 +107,12 @@ router.get('/getInfo', async (req, res) => {
         for (const repo of userRepos) {
             repoInfoPromises.push(getRepoInfo(repo))
         }
-        for (const repo of starredRepos) {
-            repoInfoPromises.push(getRepoInfo(repo))
-        }
-        for (const repo of watchedRepos) {
-            repoInfoPromises.push(getRepoInfo(repo))
-        }
+      /*for (const repo of starredRepos) {
+          repoInfoPromises.push(getRepoInfo(repo))
+      }
+      for (const repo of watchedRepos) {
+          repoInfoPromises.push(getRepoInfo(repo))
+      }*/
         Promise.all(repoInfoPromises).then(_ => {
             const userInfo = { ...reposInfo, ...userData };
             // console.log(userInfo);
