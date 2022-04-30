@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import {Nav, Navbar, NavDropdown, ThemeProvider} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
+import GitForm from './GitForm';
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
         >
             <Navbar bg="light" expand="lg">
                 <Container>
-                    <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+                    <Navbar.Brand href="#home">Travahos</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
@@ -29,7 +30,9 @@ function App() {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            <div>Your app...</div>
+
+            <GitForm></GitForm>
+
         </ThemeProvider>
     </div>
   );
