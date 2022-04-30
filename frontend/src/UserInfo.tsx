@@ -2,15 +2,14 @@ import React, {useEffect, useState} from 'react';
 import './UserInfo.css';
 import {useSearchParams} from "react-router-dom";
 import Image from 'react-bootstrap/Image'
-import {Button, Col, Form, Row, Spinner} from "react-bootstrap";
+import {Badge, Button, Col, Form, Row, Spinner} from "react-bootstrap";
 import Offer from "./Offer";
+import getColor from 'github-lang-colors';
 
 function UserInfo() {
     const [userInfo, setUserInfo] = useState();
     const [error, setError] = useState();
     const [searchParams] = useSearchParams();
-
-    console.log(searchParams.get('code'));
 
     useEffect(() => {
         fetch(`http://127.0.0.1:8080/githubUser/getInfo?code=${searchParams.get('code')}`)
@@ -35,6 +34,8 @@ function UserInfo() {
         );
     }
 
+    const langEntries = Object.entries(userInfo.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6);
+
     const githubSignUpDate = new Date(userInfo.created_at);
     const yearsOfExperience = new Date().getFullYear() - githubSignUpDate.getFullYear();
 
@@ -53,7 +54,20 @@ function UserInfo() {
                             userInfo.location && <>📍 {userInfo.location}</>
                         }
                         <br/>
-                        👨‍💻 JavaScript, Java, React
+                        👨‍💻 {langEntries.map((entry, key) => {
+                        console.log(getColor(entry[0]) + " !important");
+                        return (
+                            <Badge
+                                ref={node => {
+                                    if (node) {
+                                        node.style.setProperty('background-color', getColor(entry[0]), "important");
+                                    }
+                                }}
+                                className="prog-lang-badge"
+                                key={key}
+                            >{entry[0]}</Badge>
+                        )
+                    })}
                     </Col>
                 </Row>
             </div>
