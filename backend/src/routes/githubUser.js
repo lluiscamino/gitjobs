@@ -116,14 +116,7 @@ router.get('/getInfo', async (req, res) => {
         Promise.all(repoInfoPromises).then(_ => {
             const userInfo = { ...reposInfo, ...userData };
 
-            axios({
-                method: 'get',
-                url: 'http://127.0.0.1:8080/infoJobs/getOffers',
-                headers: { 'Accept': 'application/json' },
-                params: {
-                    userInfo: userInfo
-                }
-            }).then(data => res.status(200).send(data.offers));
+            res.status(200).send(userInfo);
         })
     } catch (e) {
         console.log(e);
