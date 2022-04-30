@@ -4,8 +4,8 @@ const axios = require('axios');
 const { URLSearchParams } = require('url');
 require('dotenv').config();
 
-CLIENT_ID = process.env.CLIENT_ID;
-CLIENT_SECRET = process.env.CLIENT_SECRET;
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 router.get('/authenticate', (req, res) => {
     const params = new URLSearchParams({
@@ -83,8 +83,8 @@ router.get('/getInfo', async (req, res) => {
         const getRepoInfo = async repo => {
             try {
 
-                const owner = repo.owner.login
-                const repoName = repo.name
+              const owner = repo.owner.login;
+              const repoName = repo.name;
                 
                 const readmeURL = await axios.get(`https://api.github.com/repos/${owner}/${repoName}/readme`, {
                     headers: { 'Authorization': 'token ' + token }
@@ -103,7 +103,7 @@ router.get('/getInfo', async (req, res) => {
             }
         };
 
-        let repoInfoPromises = []
+      let repoInfoPromises = [];
         for (const repo of userRepos) {
             repoInfoPromises.push(getRepoInfo(repo))
         }
@@ -120,7 +120,7 @@ router.get('/getInfo', async (req, res) => {
         })
     } catch (e) {
         console.log(e);
-    };
+    }
 });
 
 module.exports = router;
