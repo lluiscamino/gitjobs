@@ -3,6 +3,8 @@ import './GitForm.css';
 import {AiFillGithub} from "react-icons/ai";
 import {BiWorld} from "react-icons/bi";
 import {MdAttachMoney} from "react-icons/md";
+import {Image} from "react-bootstrap";
+import bigLogo from './Images/fullLogo.png';
 
 // Form for signing in to github
 export default function GitForm() {
@@ -15,6 +17,8 @@ export default function GitForm() {
                 <div className="row gx-5 justify-content-center">
                     <div className="col-lg-6">
                         <div className="text-center my-5">
+                        <Image height={300} src={bigLogo} style={{position: 'relative', left: '35px'}} alt="Home page"/> GitJobs
+
                             <h1 className="display-5 fw-bolder text-white mb-2">Find IT jobs in Spain 🇪🇸</h1>
                             <p className="lead text-white-50 mb-4">
                                 Quickly find software development job postings based in Spain that are relevant to your

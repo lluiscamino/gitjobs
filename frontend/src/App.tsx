@@ -6,6 +6,7 @@ import Container from "react-bootstrap/Container";
 import GitForm from './GitForm';
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import UserInfo from "./UserInfo";
+import logo from './Images/beeLogo.png';
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
                   <Navbar variant="dark" bg="dark" expand="lg">
                       <Container>
                           <Navbar.Brand href="/">
-                              <Image height={32} src="/logo.png" alt="Home page"/> GitJobs
+                              <Image height={50} src={logo} style={{position: 'relative', bottom: '5px'}} alt="Home page"/> GitJobs
                           </Navbar.Brand>
                           <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                           <Navbar.Collapse id="basic-navbar-nav">
