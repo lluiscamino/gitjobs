@@ -10,13 +10,13 @@ CLIENT_SECRET = process.env.CLIENT_SECRET;
 router.get('/authenticate', (req, res) => {
     const params = new URLSearchParams({
         client_id: CLIENT_ID,
-      redirect_uri: 'http://127.0.0.1:3000/redirect'
+        redirect_uri: 'http://127.0.0.1:3000/redirect'
     });
     res.status(301).redirect('https://github.com/login/oauth/authorize/?' + params)
 });
 
 router.get('/getInfo', async (req, res) => {
-  const code = req.query.code;
+    const code = req.query.code;
     let accessToken;
     try {
         accessToken = await axios({
@@ -32,47 +32,66 @@ router.get('/getInfo', async (req, res) => {
         });
     } catch (err) {
         console.error("Failed to obtain access token");
-      debug(err.stack);
+        debug(err.stack);
         res.sendStatus(500);
     }
 
     const token = accessToken.data.access_token;
 
-  if (!token) {
-    console.log("Invalid token");
-    return;
-  }
-  console.log(token);
+    if (!token) {
+        console.log("Invalid token");
+        return;
+    }
+    console.log(token);
 
-  try {
-    const userInfo = await axios({
-      method: 'get',
-      url: 'https://api.github.com/user',
-      headers: {'Authorization': 'token ' + token},
-    });
-    // call urls and for each, access languages, topics and readme contents
-    const starredURL = userInfo.data.starred_url;
-    const reposURL = userInfo.data.repos_url;
-    const watchingURL = userInfo.data.subscriptions_url;
+    try {
+        const userData = await axios({
+            method: 'get',
+            url: 'https://api.github.com/user',
+            headers: { 'Authorization': 'token ' + token },
+        });
 
-    const bio = userInfo.data.bio;
+        // extract queryable info from bio
+        const bio = userData.data.bio;
 
-    // console.log("starred " + starredURL)
-    // console.log("repos " + reposURL)
-    // console.log("watching " + watchingURL)
-    // console.log("bio " + bio)
+        // call urls and for each, access languages, topics and readme contents
+        const getRepos = async url => {
+            repos = await axios.get(url)
+            return repos.data
+        }
 
-    const userRepos = await axios({
-      method: 'get',
-      url: reposURL,
-      // headers: { 'Authorization': 'token ' + token },
-    });
+        const reposURL = userData.data.repos_url;
+        // const starredURL = userData.data.starred_url.replace('{/owner}{/repo}','');
+        // const watchingURL = userData.data.subscriptions_url;
+        const userRepos = await getRepos(reposURL);
+        // const starredRepos = await getRepos(starredURL);
+        // const watchedRepos = await getRepos(watchingURL);
 
-    console.log(userRepos.data);
-    res.status(200).send(userInfo.data);
-  } catch (e) {
-    console.log(e);
-  }
+        let reposInfo = {
+            repoLanguages: {},
+            repoTopics: []
+        }
+
+        const getReposInfo = (async repo => {
+            //TODO get readme contents
+            const repoLanguages = await axios.get(repo.languages_url);
+            reposInfo.repoLanguages = { ...reposInfo.repoLanguages, repoLanguages };
+            reposInfo.repoTopics = [...new Set([...reposInfo.repoTopics, ...repo.topics])]
+        });
+
+        userRepos.forEach(getReposInfo);
+
+        // starredRepos.forEach(getReposInfo);
+
+        // watchedRepos.forEach(getReposInfo);
+
+
+        const userInfo = {...reposInfo ,...{ bio: bio }}
+        console.log(userInfo);
+        res.status(200).send(userInfo);
+    } catch (e) {
+        console.log(e);
+    }
 
 
 });
