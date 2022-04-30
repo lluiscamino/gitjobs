@@ -1,7 +1,8 @@
 import React from 'react';
 import './GitForm.css';
 import {AiFillGithub} from "react-icons/ai";
-import {Link} from "react-router-dom";
+import {BiWorld} from "react-icons/bi";
+import {MdAttachMoney} from "react-icons/md";
 
 // Form for signing in to github
 export default function GitForm() {
@@ -23,8 +24,8 @@ export default function GitForm() {
                                 <a href={authenticateUrl} className="btn btn-primary btn-lg px-4 me-sm-3">
                                     <AiFillGithub/> Get started
                                 </a>
-                                <Link to="learn-more" className="btn btn-outline-light btn-lg px-4" href="#!">Learn
-                                    More</Link>
+                                <a href="#learn-more" className="btn btn-outline-light btn-lg px-4">Learn
+                                    More</a>
                             </div>
                         </div>
                     </div>
@@ -35,34 +36,26 @@ export default function GitForm() {
             <div className="container px-5 my-5">
                 <div className="row gx-5">
                     <div className="col-lg-4 mb-5 mb-lg-0">
-                        <div className="feature bg-primary bg-gradient text-white rounded-3 mb-3"></div>
-                        <h2 className="h4 fw-bolder">Featured title</h2>
-                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another
-                            sentence and probably just keep going until we run out of words.</p>
-                        <a className="text-decoration-none" href="#!">
-                            Call to action
-                            <i className="bi bi-arrow-right"></i>
-                        </a>
+                        <div className="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                            <AiFillGithub/>
+                        </div>
+                        <h2 className="h4 fw-bolder">Ease of use</h2>
+                        <p>Connect GitJobs to your GitHub account and instantly get jobs based on your main skills.</p>
                     </div>
                     <div className="col-lg-4 mb-5 mb-lg-0">
-                        <div className="feature bg-primary bg-gradient text-white rounded-3 mb-3"></div>
-                        <h2 className="h4 fw-bolder">Featured title</h2>
-                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another
-                            sentence and probably just keep going until we run out of words.</p>
-                        <a className="text-decoration-none" href="#!">
-                            Call to action
-                            <i className="bi bi-arrow-right"></i>
-                        </a>
+                        <div className="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                            <BiWorld/>
+                        </div>
+                        <h2 className="h4 fw-bolder">Local and international</h2>
+                        <p>Find the best Spain-based as well as other international job postings.</p>
                     </div>
                     <div className="col-lg-4">
-                        <div className="feature bg-primary bg-gradient text-white rounded-3 mb-3"></div>
-                        <h2 className="h4 fw-bolder">Featured title</h2>
-                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another
-                            sentence and probably just keep going until we run out of words.</p>
-                        <a className="text-decoration-none" href="#!">
-                            Call to action
-                            <i className="bi bi-arrow-right"></i>
-                        </a>
+                        <div className="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                            <MdAttachMoney/>
+                        </div>
+                        <h2 className="h4 fw-bolder">Free</h2>
+                        <p>GitJobs is and will always be free thanks to our integration the job finding portal <a
+                            href="https://www.infojobs.net/">Infojobs</a>.</p>
                     </div>
                 </div>
             </div>
