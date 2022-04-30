@@ -14,9 +14,9 @@ function App() {
               <ThemeProvider
                   breakpoints={['xxxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}
               >
-                  <Navbar bg="light" expand="lg">
+                  <Navbar variant="dark" bg="dark" expand="lg">
                       <Container>
-                          <Navbar.Brand href="#home">Travahos</Navbar.Brand>
+                          <Navbar.Brand href="#home">GitJobs</Navbar.Brand>
                           <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                           <Navbar.Collapse id="basic-navbar-nav">
                               <Nav className="me-auto">
@@ -34,12 +34,13 @@ function App() {
                       </Container>
                   </Navbar>
 
-                  <Container>
-                      <Routes>
-                          <Route path="/" element={<GitForm/>}/>
-                          <Route path="/redirect" element={<UserInfo/>}/>
-                      </Routes>
-                  </Container>
+                  <Routes>
+                      <Route path="/" element={<GitForm/>}/>
+                      <Route
+                          path="/redirect"
+                          element={<Container className="user-info-container"><UserInfo/></Container>}
+                      />
+                  </Routes>
 
               </ThemeProvider>
           </div>

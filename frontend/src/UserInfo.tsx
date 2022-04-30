@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import './UserInfo.css';
 import {useSearchParams} from "react-router-dom";
 import Image from 'react-bootstrap/Image'
 import {Col, Form, Row, Spinner} from "react-bootstrap";
