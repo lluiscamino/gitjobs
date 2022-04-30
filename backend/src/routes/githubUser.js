@@ -3,6 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 const { URLSearchParams } = require('url');
 require('dotenv').config();
+const getFriends = require('./friends');
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -83,39 +84,39 @@ router.get('/getInfo', async (req, res) => {
         const getRepoInfo = async repo => {
             try {
 
-              const owner = repo.owner.login;
-              const repoName = repo.name;
-                
+                const owner = repo.owner.login;
+                const repoName = repo.name;
+
                 const readmeURL = await axios.get(`https://api.github.com/repos/${owner}/${repoName}/readme`, {
                     headers: { 'Authorization': 'token ' + token }
                 });
                 const repoLanguages = await axios.get(repo.languages_url, {
                     headers: { 'Authorization': 'token ' + token }
                 });
-                
+
                 reposInfo.repoLanguages = Object.entries(reposInfo.repoLanguages).reduce((acc, [key, value]) =>
-                ({ ...acc, [key]: (acc[key] || 0) + value })
-                , { ...repoLanguages.data });
+                    ({ ...acc, [key]: (acc[key] || 0) + value })
+                    , { ...repoLanguages.data });
                 reposInfo.repoTopics = [...new Set([...reposInfo.repoTopics, ...repo.topics])];
                 reposInfo.repoReadmes.push(readmeURL.data.download_url)
             } catch (err) {
-                console.error(err)
+                console.error('Error getting repo info, skipping')
             }
         };
 
-      let repoInfoPromises = [];
+        let repoInfoPromises = [];
         for (const repo of userRepos) {
             repoInfoPromises.push(getRepoInfo(repo))
         }
-      /*for (const repo of starredRepos) {
-          repoInfoPromises.push(getRepoInfo(repo))
-      }
-      for (const repo of watchedRepos) {
-          repoInfoPromises.push(getRepoInfo(repo))
-      }*/
-        Promise.all(repoInfoPromises).then(_ => {
-            const userInfo = { ...reposInfo, ...userData };
-            // console.log(userInfo);
+        /*for (const repo of starredRepos) {
+            repoInfoPromises.push(getRepoInfo(repo))
+        }
+        for (const repo of watchedRepos) {
+            repoInfoPromises.push(getRepoInfo(repo))
+        }*/
+      Promise.all(repoInfoPromises).then(async _ => {
+        const userInfo = {...reposInfo, ...userData, friends: await getFriends(token)};
+
             res.status(200).send(userInfo);
         })
     } catch (e) {

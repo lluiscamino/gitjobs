@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import './UserInfo.css';
-import {useSearchParams} from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import Image from 'react-bootstrap/Image'
-import {Badge, Button, Col, Form, Row, Spinner, CardGroup} from "react-bootstrap";
+import { Badge, Button, Col, Form, Row, Spinner } from "react-bootstrap";
 import Offer from "./Offer";
 import getColor from 'github-lang-colors';
 
@@ -17,13 +17,14 @@ function UserInfo() {
     useEffect(() => {
         fetch(`http://127.0.0.1:8080/githubUser/getInfo?code=${searchParams.get('code')}`)
             .then(response => response.json())
-            .then(data => setUserInfo(data))
+            .then((data) => {
+                setUserInfo(data)
+                fetch(`http://127.0.0.1:8080/infoJobs/getOffers?userInfo=${JSON.stringify(data)}`)
+                    .then(response => response.json())
+                    .then(data => setOffers(data))
+                    .catch(error => setError(error))
+            })
             .catch(error => setError(error));
-
-        fetch('http://127.0.0.1:8080/infoJobs/getOffers')
-            .then(response => response.json())
-            .then(data => setOffers(data.items))
-            .catch(error => setError(error))
     }, []);
 
     /*if (error) {
@@ -54,50 +55,50 @@ function UserInfo() {
             <div className="user-header">
                 <Row>
                     <Col xs="auto">
-                        <Image src={userInfo.avatar_url} alt={userInfo.name} height={128} width={128} roundedCircle/>
+                        <Image src={userInfo.avatar_url} alt={userInfo.name} height={128} width={128} roundedCircle />
                     </Col>
                     <Col>
                         <h2>{userInfo.name}</h2>
                         {
                             userInfo.location && <>📍 {userInfo.location}</>
                         }
-                        <br/>
+                        <br />
                         👨‍💻 {langEntries.map((entry, key) => {
-                        return (
-                            <Badge
-                                ref={node => {
-                                    if (node) {
-                                        node.style.setProperty('background-color', getColor(entry[0]), "important");
-                                    }
-                                }}
-                                className="prog-lang-badge"
-                                key={key}
-                            >{entry[0]}</Badge>
-                        )
-                    })}
+                            return (
+                                <Badge
+                                    ref={node => {
+                                        if (node) {
+                                            node.style.setProperty('background-color', getColor(entry[0]), "important");
+                                        }
+                                    }}
+                                    className="prog-lang-badge"
+                                    key={key}
+                                >{entry[0]}</Badge>
+                            )
+                        })}
                     </Col>
                 </Row>
             </div>
-            <hr/>
+            <hr />
             <Form>
                 <h3>Search parameters</h3>
                 <Row>
                     <Col>
                         <Form.Group>
                             <Form.Label>Location</Form.Label>
-                            <Form.Control type="text"/>
+                            <Form.Control type="text" />
                         </Form.Group>
                     </Col>
                     <Col>
                         <Form.Group>
                             <Form.Label>Years of experience</Form.Label>
-                            <Form.Control type="number" defaultValue={yearsOfExperience}/>
+                            <Form.Control type="number" defaultValue={yearsOfExperience} />
                         </Form.Group>
                     </Col>
                     <Col>
                         <Form.Group>
                             <Form.Label>Technical skills</Form.Label>
-                            <Form.Control type="text"/>
+                            <Form.Control type="text" />
                         </Form.Group>
                     </Col>
                     <Col>
@@ -108,9 +109,9 @@ function UserInfo() {
                     </Col>
                 </Row>
             </Form>
-            <hr/>
+            <hr />
             <h3>Colleagues</h3>
-            <hr/>
+            <hr />
             <h3>Recommended job offers</h3>
             <div className="container">
                 <div className="row">
