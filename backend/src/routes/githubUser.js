@@ -44,15 +44,14 @@ router.get('/getInfo', async (req, res) => {
     }
 
     try {
-        const userData = await axios({
+        const userEndpoint = await axios({
             method: 'get',
             url: 'https://api.github.com/user',
             headers: { 'Authorization': 'token ' + token },
         });
 
-        // extract queryable info from bio
-        //TODO add more personal info to query
-        const bio = userData.data.bio;
+        // extract queryable info from profile
+        const userData = userEndpoint.data;
 
         // call urls and for each, access languages, topics and readme contents
         const getRepos = async url => {
@@ -62,9 +61,9 @@ router.get('/getInfo', async (req, res) => {
             return repos.data;
         };
 
-        const reposURL = userData.data.repos_url;
-        const starredURL = userData.data.starred_url.replace('{/owner}{/repo}', '');
-        const watchingURL = userData.data.subscriptions_url;
+        const reposURL = userData.repos_url;
+        const starredURL = userData.starred_url.replace('{/owner}{/repo}', '');
+        const watchingURL = userData.subscriptions_url;
 
         const userRepos = await getRepos(reposURL, {
             headers: { 'Authorization': 'token ' + token }
@@ -85,25 +84,27 @@ router.get('/getInfo', async (req, res) => {
             const repoLanguages = await axios.get(repo.languages_url, {
                 headers: { 'Authorization': 'token ' + token }
             });
-            //TODO merge language bytes written with sum
-            reposInfo.repoLanguages = { ...reposInfo.repoLanguages, ...repoLanguages.data };
-
+            reposInfo.repoLanguages = Object.entries(reposInfo.repoLanguages).reduce((acc, [key, value]) =>
+                ({ ...acc, [key]: (acc[key] || 0) + value })
+                , { ...repoLanguages.data });
             reposInfo.repoTopics = [...new Set([...reposInfo.repoTopics, ...repo.topics])];
         };
 
+        let repoInfoPromises = []
         for (const repo of userRepos) {
-            await getRepoInfo(repo)
+            repoInfoPromises.push(getRepoInfo(repo))
         }
         for (const repo of starredRepos) {
-            await getRepoInfo(repo)
+            repoInfoPromises.push(getRepoInfo(repo))
         }
         for (const repo of watchedRepos) {
-            await getRepoInfo(repo)
+            repoInfoPromises.push(getRepoInfo(repo))
         }
-
-        const userInfo = { ...reposInfo, ...{ bio: bio } };
-        console.log(userInfo);
-        res.status(200).send(userInfo);
+        Promise.all(repoInfoPromises).then(_ => {
+            const userInfo = { ...reposInfo, ...userData };
+            console.log(userInfo);
+            res.status(200).send(userInfo);
+        })
     } catch (e) {
         console.log(e);
     };
