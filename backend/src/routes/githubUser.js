@@ -4,7 +4,7 @@ const axios = require('axios');
 const { URLSearchParams } = require('url');
 require('dotenv').config();
 const getFriends = require('./friends');
-const keywordExtract = require("../utils/keywordExtractor");
+const {keywordExtract, filterKeywords} = require("../utils/keywordExtractor");
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -64,8 +64,8 @@ router.get('/getInfo', async (req, res) => {
         };
 
         const reposURL = userData.repos_url;
-        const starredURL = userData.starred_url.replace('{/owner}{/repo}', '');
-        const watchingURL = userData.subscriptions_url;
+        // const starredURL = userData.starred_url.replace('{/owner}{/repo}', '');
+        // const watchingURL = userData.subscriptions_url;
 
         const userRepos = await getRepos(reposURL, {
             headers: { 'Authorization': 'token ' + token }
@@ -125,8 +125,8 @@ router.get('/getInfo', async (req, res) => {
             }
 
             const extractedKeywords = await keywordExtract(userData.bio, readmes);
-            console.log(extractedKeywords);
-            const userInfo = {...reposInfo, ...userData, token: token, friends: await getFriends(token), extractedKeywords: extractedKeywords};
+            const filteredKeywords = filterKeywords(extractedKeywords,reposInfo.repoLanguages)
+            const userInfo = {...reposInfo, ...userData, token: token, friends: await getFriends(token), extractedKeywords: filteredKeywords};
 
             res.status(200).send(userInfo);
         })
