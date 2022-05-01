@@ -13,6 +13,7 @@ const keywordExtract = (bio, readmes) => {
 
 const filterKeywords = (extractedKeywords, repoLanguagesSummary) => {
     const languagesKeywords = [...extractedKeywords.programming_languages]
+    const languagesLowerCase = languagesKeywords.map(l => l.toLowerCase())
     const sortedRepoLanguages = Object.entries(repoLanguagesSummary)
         .sort(([, a], [, b]) => b - a)
         .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
@@ -20,7 +21,7 @@ const filterKeywords = (extractedKeywords, repoLanguagesSummary) => {
     let i = languagesKeywords.length
     let j = 0
     while (i < 5 && j < repoLanguages.length) {
-        if (!languagesKeywords.includes(repoLanguages[j].toLowerCase())) {
+        if (!languagesLowerCase.includes(repoLanguages[j].toLowerCase())) {
             languagesKeywords.push(repoLanguages[j])
             i++
         }

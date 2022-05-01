@@ -59,6 +59,6 @@ for key, file in files.items():
             if " ".join(grams) in descriptions[key]:
                 tmp_descriptions.append(" ".join(grams))
 
-    result_descriptions[key] = tmp_descriptions
+    result_descriptions[key] = [keyword.title() for keyword in tmp_descriptions]
 
 print(json.dumps(result_descriptions))

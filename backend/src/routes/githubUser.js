@@ -117,12 +117,12 @@ router.get('/getInfo', async (req, res) => {
         }*/
         Promise.all(repoInfoPromises).then(async _ => {
             const readmes = [];
-            for (file of reposInfo.repoReadmes) {
-                const readme = await axios.get(file, {
-                    headers: { 'Authorization': 'token ' + token }
-                });
-                readmes.push(readme.data)
-            }
+            // for (file of reposInfo.repoReadmes) {
+            //     const readme = await axios.get(file, {
+            //         headers: { 'Authorization': 'token ' + token }
+            //     });
+            //     readmes.push(readme.data)
+            // }
 
             const extractedKeywords = await keywordExtract(userData.bio, readmes);
             const filteredKeywords = filterKeywords(extractedKeywords, reposInfo.repoLanguages)
