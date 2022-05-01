@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './UserInfo.css';
 import {useSearchParams} from "react-router-dom";
 import Image from 'react-bootstrap/Image'
-import {Badge, Button, Col, Container, Form, Row, Spinner} from "react-bootstrap";
+import {Accordion, Badge, Button, Col, Container, Form, Row, Spinner} from "react-bootstrap";
 import Offer from "./Offer";
 import getColor from 'github-lang-colors';
 import FriendCard from "./FriendCard";
@@ -67,9 +67,11 @@ function UserInfo() {
 
     if (!userInfo) {
         return (
-            <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading user data</span>
-            </Spinner>
+
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border m-5" style={{width: "3rem", height: "3rem"}}>
+                </div>
+          </div>
         );
     }
 
@@ -163,23 +165,36 @@ function UserInfo() {
                 </div>
             </Form>
             <hr />
-            <h3>Recommended job offers</h3>
-            <div className="container">
+
+            <Accordion defaultActiveKey={['0','1']} alwaysOpen>
+            <Accordion.Item eventKey="0">
+            <Accordion.Header><h3>Recommended job offers</h3></Accordion.Header>
+            <Accordion.Body><div className="container">
                 <div className="row" >
                     {offers.map((offer, key) => (
-                        <div key={key} className="col-md-4 mt-3 mt-3"><Offer offerInfo={offer}/></div>
+                        <div key={key} className="col-md mt-3"><Offer offerInfo={offer}/></div>
                 ))}
                 </div>
             </div>
             <hr/>
-            <h3>Friends</h3>
+            </Accordion.Body>
+
+            </Accordion.Item>
+            <Accordion.Item eventKey="1">
+            <Accordion.Header>
+                <h3>Friends</h3></Accordion.Header>
+                <Accordion.Body>
             <Container>
-                <Row>
+                <Row className="justify-content-md-start">
                     {
-                        userInfo.friends.map(friend => <FriendCard key={friend.id} friend={friend}/>)
+                        userInfo.friends.map(friend => <FriendCard key={friend.id} friend={friend}/> )
                     }
                 </Row>
             </Container>
+            </Accordion.Body>
+            </Accordion.Item>
+            </Accordion>
+            
         </>
     );
 }

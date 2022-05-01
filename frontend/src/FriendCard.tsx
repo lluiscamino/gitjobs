@@ -4,7 +4,8 @@ import {Link} from "react-router-dom";
 
 function FriendCard({friend}) {
     return (
-        <Card style={{width: '8rem', padding: 0}}>
+        
+        <Card style={{width: '8rem', padding: 0, marginLeft: '10px'}}>
             <Card.Img variant="top" src={friend.avatar_url}/>
             <Card.Body>
                 <Card.Title>{friend.login}</Card.Title>
