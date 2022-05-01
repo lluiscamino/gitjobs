@@ -105,12 +105,12 @@ function UserInfo() {
                         <br />
                         {userInfo.extractedKeywords.roles.length > 0 && (
                             <>
-                                💼 {userInfo.extractedKeywords.roles.map((keyword, key) => {
+                                💼 {userInfo.extractedKeywords.roles.map((keyword, key) =>
                                 <Badge
                                     bg="secondary"
                                     key={key}
                                 >{keyword}</Badge>
-                            })}
+                            )}
                                 <br/>
                             </>
                         )
