@@ -103,6 +103,18 @@ function UserInfo() {
                             userInfo.location && <>📍 {userInfo.location}</>
                         }
                         <br />
+                        {userInfo.extractedKeywords.roles.length > 0 && (
+                            <>
+                                💼 {userInfo.extractedKeywords.roles.map((keyword, key) => {
+                                <Badge
+                                    bg="secondary"
+                                    key={key}
+                                >{keyword}</Badge>
+                            })}
+                                <br/>
+                            </>
+                        )
+                        }
                         👨‍💻 {langs.map((entry, key) => {
                             return (
                                 <Badge
