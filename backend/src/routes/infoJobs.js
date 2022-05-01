@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const keywordExtract = require('../utils/keywordExtractor');
 require('dotenv').config();
 
 const CLIENT_ID = process.env.INFO_JOBS_CLIENT_ID;
@@ -17,17 +16,6 @@ router.post('/getOffers', async (req, res) => {
 
   try {
     const offers = await Promise.all(langs.flatMap(async lang => await getKeywordOffers(lang, city)));
-
-    const readmes = [];
-    for (file of readmeFiles) {
-      const readme = await axios.get(file, {
-        headers: { 'Authorization': 'token ' + token }
-      });
-      readmes.push(readme.data)
-    }
-
-    const extractedKeywords = await keywordExtract(bio, readmes);
-    console.log(extractedKeywords);
 
     res.send(offers.flat());
   } catch (err) {

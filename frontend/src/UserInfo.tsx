@@ -59,8 +59,6 @@ function UserInfo() {
     const githubSignUpDate = new Date(userInfo.created_at);
     const yearsOfExperience = new Date().getFullYear() - githubSignUpDate.getFullYear();
 
-    console.log(userInfo);
-
     return (
         <>
             <div className="user-header">
