@@ -27,7 +27,9 @@ function Offer({offerInfo}) {
                             💰 <strong>Salary</strong>: {offerInfo.salaryDescription}
                         </div>
 
-                        <h4>Minimum requirements</h4>
+                        {
+                            offerInfo.requirementMin.length > 0 && <h4>Minimum requirements</h4>
+                        }
                         {offerInfo.requirementMin}
                     </Modal.Body>
                     <Modal.Footer>
