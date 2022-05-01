@@ -19,6 +19,13 @@ function UserInfo() {
             .then((data) => {
                 setUserInfo(data);
                 const langs = Object.entries(data.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6);
+                fetchOffers(
+                    data,
+                    langs,
+                    data.bio,
+                    0,
+                    data.location
+                );
                 fetch('http://127.0.0.1:8080/infoJobs/getOffers', {
                     method: 'POST',
                     headers: {
@@ -28,6 +35,8 @@ function UserInfo() {
                     body: JSON.stringify({
                         userInfo: JSON.stringify(data),
                         langs: langs.join(',').replace(/\s/g, '%20'),
+                        bio: data.bio,
+                        minSalary: 0,
                         city: data.location
                     })
                 })
@@ -45,6 +54,29 @@ function UserInfo() {
             </Alert>
         );
     }*/
+
+    function fetchOffers(userInfo, langs, bio, minSalary, city) {
+        fetch('http://127.0.0.1:8080/infoJobs/getOffers', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userInfo: JSON.stringify(userInfo),
+                langs: langs.join(',').replace(/\s/g, '%20'),
+                bio: bio,
+                minSalary: minSalary,
+                city: city
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                setOffers(data.slice(0, 27));
+            })
+            .catch(error => setError(error))
+    }
 
     if (!userInfo) {
         return (
@@ -89,7 +121,18 @@ function UserInfo() {
                 </Row>
             </div>
             <hr />
-            <Form>
+            <Form onSubmit={event => {
+                const langs = Object.entries(userInfo.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6);
+                event.preventDefault();
+                console.log(event.target[1].value);
+                fetchOffers(
+                    userInfo,
+                    langs,
+                    userInfo.bio,
+                    event.target[1].value,
+                    event.target[0].value
+                );
+            }}>
                 <h3>Search parameters</h3>
                 <Row>
                     <Col>
@@ -100,8 +143,8 @@ function UserInfo() {
                     </Col>
                     <Col>
                         <Form.Group>
-                            <Form.Label>Years of experience</Form.Label>
-                            <Form.Control type="number" defaultValue={yearsOfExperience} />
+                            <Form.Label>Minimum salary</Form.Label>
+                            <Form.Control type="number" defaultValue={0}/>
                         </Form.Group>
                     </Col>
                     <Col>
@@ -113,7 +156,7 @@ function UserInfo() {
                     <Col>
                         <Form.Group>
                             <Form.Label></Form.Label>
-                            <Button variant="primary">Search</Button>
+                            <Button type="submit" variant="primary">Search</Button>
                         </Form.Group>
                     </Col>
                 </Row>
