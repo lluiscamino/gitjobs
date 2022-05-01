@@ -52,7 +52,8 @@ function Offer({offerInfo}) {
                         </Card.Subtitle>
                     </a>
                     <Card.Text>
-                        {offerInfo.requirementMin.substring(0, 140)}...
+                        {offerInfo.requirementMin.substring(0, 140)}
+                        {offerInfo.requirementMin.length > 140 && '...'}
                         <hr/>
                         <div>
                             📍 {offerInfo.city}<br/>

@@ -18,7 +18,7 @@ function UserInfo() {
             .then(response => response.json())
             .then((data) => {
                 setUserInfo(data);
-                const langs = Object.entries(data.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6);
+                const langs = Object.entries(data.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6).map(e => e[0]);
                 fetchOffers(
                     data,
                     langs,
@@ -86,10 +86,9 @@ function UserInfo() {
         );
     }
 
-    const langs = Object.entries(userInfo.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    const langs = Object.entries(userInfo.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6).map(e => e[0]);
 
     const githubSignUpDate = new Date(userInfo.created_at);
-    const yearsOfExperience = new Date().getFullYear() - githubSignUpDate.getFullYear();
 
     return (
         <>
@@ -109,12 +108,12 @@ function UserInfo() {
                                 <Badge
                                     ref={node => {
                                         if (node) {
-                                            node.style.setProperty('background-color', getColor(entry[0]), "important");
+                                            node.style.setProperty('background-color', getColor(entry), "important");
                                         }
                                     }}
                                     className="prog-lang-badge"
                                     key={key}
-                                >{entry[0]}</Badge>
+                                >{entry}</Badge>
                             )
                         })}
                     </Col>
@@ -122,12 +121,11 @@ function UserInfo() {
             </div>
             <hr />
             <Form onSubmit={event => {
-                const langs = Object.entries(userInfo.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6);
                 event.preventDefault();
                 console.log(event.target[1].value);
                 fetchOffers(
                     userInfo,
-                    langs,
+                    event.target[2].value.split(','),
                     userInfo.bio,
                     event.target[1].value,
                     event.target[0].value
@@ -143,23 +141,20 @@ function UserInfo() {
                     </Col>
                     <Col>
                         <Form.Group>
-                            <Form.Label>Minimum salary</Form.Label>
+                            <Form.Label>Minimum salary (yearly)</Form.Label>
                             <Form.Control type="number" defaultValue={0}/>
                         </Form.Group>
                     </Col>
                     <Col>
                         <Form.Group>
                             <Form.Label>Technical skills</Form.Label>
-                            <Form.Control type="text" />
-                        </Form.Group>
-                    </Col>
-                    <Col>
-                        <Form.Group>
-                            <Form.Label></Form.Label>
-                            <Button type="submit" variant="primary">Search</Button>
+                            <Form.Control type="text" defaultValue={langs.join(',')}/>
                         </Form.Group>
                     </Col>
                 </Row>
+                <div style={{textAlign: 'center', marginTop: 5}}>
+                    <Button type="submit" variant="primary">Search</Button>
+                </div>
             </Form>
             <hr />
             <h3>Recommended job offers</h3>
