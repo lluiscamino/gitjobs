@@ -12,7 +12,7 @@ const keywordExtract = (bio, readmes) => {
 }
 
 const filterKeywords = (extractedKeywords, repoLanguagesSummary) => {
-    const languagesKeywords = extractedKeywords.programming_languages
+    const languagesKeywords = [...extractedKeywords.programming_languages]
     const repoLanguages = Object.keys(repoLanguagesSummary)
     let i = languagesKeywords.length
     let j = 0
