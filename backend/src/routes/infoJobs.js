@@ -9,15 +9,44 @@ const CLIENT_SECRET = process.env.INFO_JOBS_CLIENT_SECRET;
 router.post('/getOffers', async (req, res) => {
   const langs = req.body.langs.split(',').slice(0, 5);
   const city = req.body.city;
+  const minSalary = req.body.minSalary;
+  const yoe = req.body.yoe;
   const userInfo = JSON.parse(req.body.userInfo);
   const readmeFiles = userInfo.repoReadmes;
   const token = userInfo.token;
   const bio = userInfo.bio;
 
   try {
-    const offers = await Promise.all(langs.flatMap(async lang => await getKeywordOffers(lang, city)));
+    let offers = await Promise.all(langs.flatMap(async lang => await getKeywordOffers(lang, city)));
+    offers = offers.flat();
 
-    res.send(offers.flat());
+    offers = offers.filter(offer => {
+      if (!offer.experienceMin?.value) {
+        return true;
+      }
+      const minJobExpStr = offer.experienceMin.value.replace(/[^0-9]/g, '');
+      const minJobExperience = parseInt(minJobExpStr);
+      if (isNaN(minJobExperience)) {
+        return true;
+      }
+      return yoe >= minJobExperience;
+    });
+
+    if (minSalary > 0) {
+      offers = offers.filter(offer => {
+        if (!offer.salaryMin?.value) {
+          return false;
+        }
+        const salaryStr = offer.salaryMin.value.replace(/[^0-9]/g, '');
+        const salary = parseInt(salaryStr);
+        if (isNaN(salary)) {
+          return true;
+        }
+        return salary >= minSalary;
+      });
+    }
+
+    res.send(offers);
   } catch (err) {
     console.error(err);
     res.sendStatus(500);

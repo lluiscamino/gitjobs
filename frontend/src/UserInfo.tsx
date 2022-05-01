@@ -18,31 +18,17 @@ function UserInfo() {
             .then(response => response.json())
             .then((data) => {
                 setUserInfo(data);
+                const githubSignUpDate = new Date(data.created_at);
+                const yearsOfExperience = new Date().getFullYear() - githubSignUpDate.getFullYear();
                 const langs = Object.entries(data.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6).map(e => e[0]);
                 fetchOffers(
                     data,
                     langs,
                     data.bio,
                     0,
-                    data.location
+                    data.location,
+                    yearsOfExperience
                 );
-                fetch('http://127.0.0.1:8080/infoJobs/getOffers', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        userInfo: JSON.stringify(data),
-                        langs: langs.join(',').replace(/\s/g, '%20'),
-                        bio: data.bio,
-                        minSalary: 0,
-                        city: data.location
-                    })
-                })
-                    .then(response => response.json())
-                    .then(data => setOffers(data.slice(0, 27)))
-                    .catch(error => setError(error))
             })
             .catch(error => setError(error));
     }, []);
@@ -55,7 +41,7 @@ function UserInfo() {
         );
     }*/
 
-    function fetchOffers(userInfo, langs, bio, minSalary, city) {
+    function fetchOffers(userInfo, langs, bio, minSalary, city, yoe) {
         fetch('http://127.0.0.1:8080/infoJobs/getOffers', {
             method: 'POST',
             headers: {
@@ -67,7 +53,8 @@ function UserInfo() {
                 langs: langs.join(',').replace(/\s/g, '%20'),
                 bio: bio,
                 minSalary: minSalary,
-                city: city
+                city: city,
+                yoe: yoe
             })
         })
             .then(response => response.json())
@@ -89,6 +76,7 @@ function UserInfo() {
     const langs = Object.entries(userInfo.repoLanguages).sort((a, b) => b[1] - a[1]).slice(0, 6).map(e => e[0]);
 
     const githubSignUpDate = new Date(userInfo.created_at);
+    const yearsOfExperience = new Date().getFullYear() - githubSignUpDate.getFullYear();
 
     return (
         <>
@@ -134,13 +122,13 @@ function UserInfo() {
             <hr />
             <Form onSubmit={event => {
                 event.preventDefault();
-                console.log(event.target[1].value);
                 fetchOffers(
                     userInfo,
-                    event.target[2].value.split(','),
+                    event.target[3].value.split(','),
                     userInfo.bio,
                     event.target[1].value,
-                    event.target[0].value
+                    event.target[0].value,
+                    event.target[2].value
                 );
             }}>
                 <h3>Search parameters</h3>
@@ -155,6 +143,12 @@ function UserInfo() {
                         <Form.Group>
                             <Form.Label>Minimum salary (yearly)</Form.Label>
                             <Form.Control type="number" defaultValue={0}/>
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group>
+                            <Form.Label>Years of experience</Form.Label>
+                            <Form.Control type="number" defaultValue={yearsOfExperience}/>
                         </Form.Group>
                     </Col>
                     <Col>
